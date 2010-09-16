@@ -1,0 +1,90 @@
+p,div,td, ul,li, h1, h1, h3{
+  font-family:arial;
+  padding:0px;
+  margin:0px; 
+}
+
+ul{
+  list-style-type: none;
+}
+
+a{
+  text-decoration:none;
+  color:black;
+}
+
+h1{
+  margin-top:10px;
+}
+
+body{
+  background-color:#ddd;
+  
+}
+
+#container{
+  width:960px;
+  margin-left:auto;
+  margin-right:auto;
+  position:relative;
+}
+
+#head{
+  height:90px;
+  width:960px;
+}
+
+#menu{
+  position:absolute;
+  left:220px;
+  bottom:0px;
+  list-style:none;
+  
+}
+
+#menu li{
+  float:left;
+  margin-right:10px;
+  background-color:#AAAAAA;
+  border-radius-topright:3px;
+  border-radius-topleft:3px;
+  -moz-border-radius-topright:3px;
+  -moz-border-radius-topleft:3px;
+  padding:3px 10px 3px 10px;
+  letter-spacing:1px;
+}
+
+#menu li:first-child{
+  background-color:#FBFBFB;
+}
+
+#menu li:hover{
+  background-color:#dd8007;
+}
+
+#context{
+  position:absolute;
+  left:0px;
+  top:90px;
+  width:185px;
+  background-color:#FBFBFB;
+  border-radius-topright:3px;
+  -moz-border-radius-topright:3px;
+  padding:15px 0px 15px 15px;
+}
+
+
+#workspace{
+  min-height:600px;
+  padding:0px 0px 15px 15px;
+  position:absolute;
+  width:755px;
+  left:205px;
+  top:90px;
+  background-color:#fbfbfb;
+  -moz-border-radius:3px 6px 6px 3px;
+}
+
+#head h1{
+  margin-top:20px;
+}

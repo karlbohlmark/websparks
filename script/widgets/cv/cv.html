@@ -1,0 +1,10 @@
+<h1>${name}</h1>
+<p>
+  ${introduction}
+</p>
+<div class="projects">
+  <div each="project in projects">
+      <h2>${project.customerName}, ${project.title}</h2>
+      <p>${project.description}</p>
+  </div>
+</div>

@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Knockout!</title>
+        <link href="css/framework.css" type="text/css" rel="stylesheet">
+        <script src="script/require.js"></script>
+        <script>
+          var runTests = function(testSet, test){
+            for(test in testSet){
+              var t= testSet[test];
+              try{
+                t();
+                console.log('-------- ' + test + ' passed');
+              }catch(error){
+                console.error('-------- ' + test + ' failed with: ' + JSON.stringify(error))
+              }finally{
+                require.reset();  
+              }
+            }
+          };
+          var assert = function(cond, mess){
+            if(!cond) 
+              throw mess
+          }
+        </script>
+        <script>
+        var tests = {
+          "Get first level require" : function(){
+            require(["test/test"], function(test){
+              assert(test.test()=="test")
+            })
+          },         
+          "Get require with transitive dependency" : function(){
+            require(["test/test2"], function(test){
+              assert(test.test2()=="test2")
+            })  
+          },
+		  "Get required module two layers of transitive dependencies" : function(){
+            require(["test/test4"], function(test){
+              assert(test.test4()=="test4")
+            })
+          }
+        }
+       
+        runTests(tests);
+        </script>
+    </head>
+    <body>
+        
+        
+        
+    </body>
+</html>

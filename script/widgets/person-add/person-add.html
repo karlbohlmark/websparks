@@ -1,0 +1,5 @@
+<form data-bind="submit: addPerson"> 
+                New person:
+                <input data-bind="value: name, valueUpdate: 'keyup'" /> 
+                <button type="submit" data-bind="enable: name().length > 0">Add</button> 
+</form> 
