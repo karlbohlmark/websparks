@@ -1,10 +1,19 @@
 <h1 id="thename">${name}</h1>
-<p>
-  ${introduction}
-</p>
-<div class="projects">
-  <div each="project in projects">
-      <h2>${project.customerName}, ${project.title}</h2>
-      <p>${project.description}</p>
+<div class="main">
+  <p>
+    ${introduction}
+  </p>
+  <div class="projects">
+    <div partial="project" each="project in projects">
+        <h2>${project.customerName}, ${project.title}</h2>
+        <p>${project.description}</p>
+    </div>
   </div>
+
+  <a class="add-project" style="display:none" href="cv-custom/projects/add">Add project</a>
+</div>
+<div class="side">
+  <ul>
+    <li each="skill in skills">${skill}</li>
+  </ul>
 </div>

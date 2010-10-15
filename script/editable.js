@@ -5,7 +5,7 @@ require.define({'editable': function(require, exports){
       bus = require('eventbus').bus,
     
       editors = {
-        'basic-text' : function(){
+        'basic-text' : function(param){
           var elem = this,
               jElem = $(elem),
               id = jElem.attr('data-editor'),
@@ -74,20 +74,23 @@ require.define({'editable': function(require, exports){
             }
           }
           
-          enterEditmode()
+          if(param==='exit')
+            exitEditmode()
+          else
+            enterEditmode()
         }
       },
     
       elementEditorMappings = {
       }
   ;
-  $.fn.editable = function(){
+  $.fn.editable = function(param){
     this.each(function(){
       var nodeName = this.nodeName,
           editor = elementEditorMappings[nodeName] || 'basic-text'
       ; 
 
-      editors[editor].call(this)
+      editors[editor].call(this, param)
     })
   }
 }}, ['lib/jquery', 'eventbus'])

@@ -1,0 +1,121 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <script>require = {define: function(){}}</script>
+<script src="script/lib/jquery.js"></script>
+<script src="script/lib/raphael.js"></script>
+<script>
+
+function createBezierSegment(start, control, stop){  
+}
+
+var graph = [
+  {
+    name : 'loadbalancer',
+    adjacencies : [
+        'webfront1',
+        'webfront2'
+    ]
+  },
+  {
+    name: 'webfront1',
+    adjacencies: [
+      'loadbalancer',
+    ]
+  },
+  {
+    name: 'webfront2',
+    adjacencies: [
+      'loadbalancer',
+    ]
+  }
+]
+
+var r, p, points = [{x:300, y:160}, {x:600, y:320}];
+ 
+ function drag(element){
+  document.onmousemove = function(ev){
+    var width =element.attributes.width.value
+      , height = element.attributes.height.value/2
+      , newX = ev.x - width/2
+      , newY = ev.y - height
+    
+    element.setAttributeNS(null, "x", newX)
+    element.setAttributeNS(null, "y", newY)
+    
+    points = [points[0], {x: ev.x -  width/2, y: ev.y}]
+    drawCurve()
+  }
+  document.onmouseup = function(ev){
+    document.onmousemove = null
+  }
+}
+
+function halfway(here, there){
+  return {
+    x: here.x + (there.x - here.x)/2,
+    y: here.y + (there.y - here.y)/2
+  }
+}
+
+function drawSymmetricQubicBezierBetween(point1, point2){
+  var pathData = ["M"]
+    , middle = halfway(point1, point2)
+  pathData.push(point1.x)
+  pathData.push(point1.y)
+  pathData.push('q')
+  pathData.push(middle.x - point1.x)
+  pathData.push(point1.y - point1.y)
+  pathData.push(middle.x - point1.x)
+  pathData.push(middle.y - point1.y)
+  pathData.push('q')
+  pathData.push(middle.x - middle.x)
+  pathData.push(point2.y - middle.y)
+  pathData.push(point2.x - middle.x)
+  pathData.push(point2.y - middle.y)
+  var data = pathData.join(' ')
+  p = this.path(data).attr({'stroke-width': 5})
+}
+
+
+function drawCurve(){
+  p.remove()
+  drawSymmetricQubicBezierBetween.apply(r, points)
+}
+
+
+$(function(){
+  r = Raphael("holder", 900, 820)
+  //var p = r.path("M 300 160 q 130 0 150 75 q 30 75 150 75").attr({'stroke-width': 5})
+  
+  drawSymmetricQubicBezierBetween.apply(r, points)
+  
+  r.rect(100,100, 200, 120, 7).attr({'stroke-width': 5})
+  var r2 = r.rect(600,260, 200, 120, 7)
+    .attr({'stroke-width': 5})
+    .attr({'fill':'red'})
+  r.canvas.onmousedown = function(ev){
+    if(ev.target.toString().toUpperCase().match(/RECT/))
+      drag(ev.target)
+  }
+  
+  
+  /*
+  var points = []
+  svgElem.addEventListener('mousedown', function(e){
+ 
+    if(points.length<3){
+      points.push({x:e.pageX, y: e.pageY})
+    }else{
+      createBezierSegment.apply({},points)
+    }
+  }, false);
+  */
+})
+</script>
+</head>
+<body>
+  <div id="holder">
+  </div>
+</body>
+</html>

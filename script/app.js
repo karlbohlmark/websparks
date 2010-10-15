@@ -42,6 +42,11 @@ require.define({
   			return;
   		}
   		
+  		resource.getStyle(name, 
+  		  function gotStyle(){
+  		    
+  		  }
+		  );
   		resource.getTemplate(name, 
   			function(template){
   				var element = layout.addWidgetToWorkspace(name)(template), 
@@ -68,7 +73,7 @@ require.define({
     exports.run = function(){
 		  
 		  var widgets = [];
-		  ['cv', 'cv-custom', 'skill-add', 'person-add', 'people-search'].forEach(function(widgetName){
+		  ['cv-custom', /* 'skill-add', 'person-add', 'people-search' */].forEach(function(widgetName){
 	       var widget = require("widgets/name/name".replace(/name/g, widgetName)).widget;
 		   widgets.push({title: widgetName, action: '#/view/' + widgetName});
 		  })
@@ -78,7 +83,7 @@ require.define({
 		  
 		  $('#context').html('').append(menu.menu);
 		  
-		  app.run('#/view/skill-add');
+		  app.run('#/view/cv-custom');
 		  //initView("skill-add")
     }  
   }
@@ -89,11 +94,11 @@ require.define({
     "template-engines/spark",
 	  "lib/sammy/sammy", 
 	  "menu",
-	  "widgets/cv/cv",
+	  //"widgets/cv/cv",
 	  "widgets/cv-custom/cv-custom",
-    "widgets/skill-add/skill-add", 
-    "widgets/person-add/person-add",
-    "widgets/people-search/people-search",
+    //"widgets/skill-add/skill-add", 
+    //"widgets/person-add/person-add",
+    //"widgets/people-search/people-search",
     "layout",
     "editable"
    ]
