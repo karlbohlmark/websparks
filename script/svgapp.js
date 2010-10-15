@@ -18,6 +18,12 @@ var app = (function(){
     , nodeWidth = 200
     , nodeColor = '#000000'
     , nodeFill = '#efefef'
+    , generateGuid = function(){
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+        return v.toString(16);
+       }).toUpperCase();
+    }
     , trigger = function(ev, data){
       var callbacks = handlers[ev]
       data.eventName = ev
@@ -29,8 +35,8 @@ var app = (function(){
       }
     }
     , moveElement = function(x, y, element, nodeRelations, app){
-      element.setAttributeNS(null, "x", x - element.attributes.width.value/2)
-      element.setAttributeNS(null, "y", y - element.attributes.height.value/2)
+      element.setAttributeNS(null, "x", x)
+      element.setAttributeNS(null, "y", y)
       for(var r in nodeRelations){
         r = nodeRelations[r]
         var path = document.getElementById(r.key)
@@ -86,7 +92,7 @@ var app = (function(){
         "fill": nodeFill,
         "stroke": color,
         "stroke-width": '5',
-        "id": (new Date).toString() 
+        "id": generateGuid() 
       }      
       props.key = props.id
       nodes.save(props)
@@ -121,7 +127,7 @@ var app = (function(){
           
           var dragElement = (function(element, nodeRelations, app){
             return function(ev){
-              moveElement(ev.x, ev.y, element, nodeRelations, app)
+              moveElement(ev.x - parseInt(element.attributes.width.value)/2, ev.y - parseInt(element.attributes.height.value)/2, element, nodeRelations, app)
             }
           })(element, nodeRelations, thisApp)
           
@@ -139,15 +145,18 @@ var app = (function(){
       var selected = null
       return function(ev){
         var thisApp = this
+         
         if(selected){
-          var relation = {
-            key: getRelationId(selected.id, ev.target.id),
-            from : selected.id,
-            to: ev.target.id
-          }
+          var key = getRelationId(selected.id, ev.target.id)
+            , relation = {
+                key: key
+              , from : selected.id
+              , to: ev.target.id
+            }
+          ;
           relations.save(relation)
           trigger.apply(thisApp, ['relationcreated', relation])
-          edits.unshift({eventName:'relationcreated', from: relation.from, to:relation.to})
+          edits.unshift({eventName:'relationcreated', from: relation.from, to:relation.to, key: key})
           selected.setAttributeNS(null, "stroke-width", '5px')
           selected = null
         }else{
@@ -170,13 +179,30 @@ var app = (function(){
       var element = document.getElementById(edit.key)
       var id = edit.key
         , nodeRelations = getNodeRelations(id)
+        
+      nodes.get(id, function(node){
+        node.x = edit.oldx
+        node.y = edit.oldy
+        nodes.save(node)
+      })
       
-      moveElement(parseInt(edit.oldx) + parseInt(element.attributes.width.value)/2, 
-        parseInt(edit.oldy) + parseInt(element.attributes.height.value)/2, 
-        element, nodeRelations, this)
-    },
-    'nodecreated' : function(edit){
-      
+      moveElement(parseInt(edit.oldx), 
+        parseInt(edit.oldy), 
+        element, nodeRelations, this
+      )
+    }
+    , 'nodecreated' : function(edit){
+      var id = edit.id
+        , element = document.getElementById(id)
+       
+      element.parentNode.removeChild(element)
+      nodes.remove(id)
+    }
+    , 'relationcreated' : function(edit){
+      var id = edit.key
+        , element = document.getElementById(id)
+      relations.remove(id)
+      element.parentNode.removeChild(element)
     }
   }
  
@@ -206,10 +232,13 @@ var app = (function(){
         }
       })
       
+      edits.length = 0
+      
       document.onkeydown = function(ev){
         if(ev.which=='z'.charCodeAt(0) || ev.which=='Z'.charCodeAt(0)){
           var edit = edits.shift()
-            , undoAction = undos[edit.eventName]
+            , undoAction
+          edit && (undoAction = undos[edit.eventName])
           undoAction && undoAction.call(this, edit)
         }
       }
