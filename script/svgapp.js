@@ -28,6 +28,25 @@ var app = (function(){
         }
       }
     }
+    , moveElement = function(x, y, element, nodeRelations, app){
+      element.setAttributeNS(null, "x", x - element.attributes.width.value/2)
+      element.setAttributeNS(null, "y", y - element.attributes.height.value/2)
+      for(var r in nodeRelations){
+        r = nodeRelations[r]
+        var path = document.getElementById(r.key)
+        path.parentNode.removeChild(path)
+        trigger.apply(app, ['relationcreated', r])
+      }
+    }
+    , getNodeRelations = function(id){
+        var nodeRelations = []
+        relations.each(function(r){
+          if(r.from == id || r.to == id){
+            nodeRelations.push(r)
+          }
+        })
+        return nodeRelations
+      }
   ;
   
   var actions = {
@@ -80,7 +99,7 @@ var app = (function(){
         }
       }
        
-       return function(ev){
+      return function(ev){
         var thisApp = this
           , cancel = canceller(ev)
           
@@ -94,25 +113,15 @@ var app = (function(){
           
           var element = ev.target
             , id = element.getAttributeNS(null, 'id')
-            , nodeRelations = []
+            , nodeRelations = getNodeRelations(id)
             , oldx = element.getAttributeNS(null, 'x')
             , oldy = element.getAttributeNS(null, 'y')
-          relations.each(function(r){
-            if(r.from == id || r.to == id){
-              nodeRelations.push(r)
-            }
-          })
+          ;
+          
           
           var dragElement = (function(element, nodeRelations, app){
             return function(ev){
-              element.setAttributeNS(null, "x", ev.x - element.attributes.width.value/2)
-              element.setAttributeNS(null, "y", ev.y - element.attributes.height.value/2)
-              for(var r in nodeRelations){
-                r = nodeRelations[r]
-                var path = document.getElementById(r.key)
-                path.parentNode.removeChild(path)
-                trigger.apply(thisApp, ['relationcreated', r])
-              }
+              moveElement(ev.x, ev.y, element, nodeRelations, app)
             }
           })(element, nodeRelations, thisApp)
           
@@ -155,6 +164,21 @@ var app = (function(){
       
     handlers[action].push(actions[action])
   }
+  
+  var undos = {
+    'nodemoved' : function(edit){
+      var element = document.getElementById(edit.key)
+      var id = edit.key
+        , nodeRelations = getNodeRelations(id)
+      
+      moveElement(parseInt(edit.oldx) + parseInt(element.attributes.width.value)/2, 
+        parseInt(edit.oldy) + parseInt(element.attributes.height.value)/2, 
+        element, nodeRelations, this)
+    },
+    'nodecreated' : function(edit){
+      
+    }
+  }
  
   return {
     run: function(parentElem){
@@ -185,11 +209,8 @@ var app = (function(){
       document.onkeydown = function(ev){
         if(ev.which=='z'.charCodeAt(0) || ev.which=='Z'.charCodeAt(0)){
           var edit = edits.shift()
-          if(edit.eventName==='nodemoved'){
-            var element = document.getElementById(edit.key)
-            element.setAttributeNS(null, 'x', edit.oldx)
-            element.setAttributeNS(null, 'y', edit.oldy)
-          }
+            , undoAction = undos[edit.eventName]
+          undoAction && undoAction.call(this, edit)
         }
       }
     }
