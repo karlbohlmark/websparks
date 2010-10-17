@@ -10,22 +10,24 @@ var halfway = function(here, there){
 }
 
 var getRectangleConnectionPoints = function(fromElem, toElem){
-  var fromAttr = fromElem.attributes
-    , toAttr = toElem.attributes
-    , fromx = parseInt(fromAttr.x.value)
-    , fromy = parseInt(fromAttr.y.value)
-    , tox = parseInt(toAttr.x.value)
-    , toy = parseInt(toAttr.y.value)
+  var fromAttr = fromElem.childNodes[0].attributes
+    , toAttr = toElem.childNodes[0].attributes
+    , fromMatrix = fromElem.transform.animVal.getItem(0).matrix
+    , toMatrix = toElem.transform.animVal.getItem(0).matrix
+    , fromx = parseInt(fromMatrix.e)
+    , fromy = parseInt(fromMatrix.f)
+    , tox = parseInt(toMatrix.e)
+    , toy = parseInt(toMatrix.f)
     , fromWidth = parseInt(fromAttr.width.value)
     , fromHeight = parseInt(fromAttr.height.value)
     , toWidth = parseInt(toAttr.width.value)
     , toHeight = parseInt(toAttr.height.value)
     , xdiff = (fromx - tox)
     , ydiff = (fromy - toy)
-    , fromPointx = xdiff < 0 ? fromx + fromWidth : fromx 
-    , fromPointy = (ydiff < 0) ? fromy + fromHeight / 2 : fromy + fromHeight / 2
-    , toPointx = xdiff < 0 ? tox : tox + toWidth
-    , toPointy = (toy + toHeight/2)
+    , fromPointx = xdiff < 0 ? fromx + fromWidth/2 : fromx - fromWidth/2
+    , fromPointy = (ydiff < 0) ? fromy : fromy
+    , toPointx = xdiff < 0 ? tox - toWidth/2 : tox + toWidth/2
+    , toPointy = toy
   return [{x:fromPointx, y:fromPointy},{x:toPointx, y:toPointy}]
 }
 var svg = {
