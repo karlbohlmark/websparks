@@ -142,8 +142,8 @@ var app = (function(){
         , color = nodeColor
       ;
       var props = {
-        "x": x-width/2,
-        "y": y - height/2,
+        "x": x,
+        "y": y ,
         "rx": 20,
         "ry": 20,
         "width": width,
@@ -189,7 +189,7 @@ var app = (function(){
           
           var dragElement = (function(element, nodeRelations, app){
             return function(ev){
-              moveElement(ev.x - parseInt(rect.attributes.width.value)/2, ev.y - parseInt(rect.attributes.height.value)/2, g, nodeRelations, app)
+              moveElement(ev.x, ev.y, g, nodeRelations, app)
             }
           })(element, nodeRelations, thisApp)
           
