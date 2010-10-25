@@ -18,7 +18,8 @@ require.define({
             'type' : 'PUT',
             'data' : key + '=' + value,
             'success' : function(response){
-              alert('successfully put data on backend')
+              if(response.length>0)
+                alert('successfully put data on backend')
             },
             'error' : function(){
               alert('failed to write data to backend server')
@@ -29,16 +30,17 @@ require.define({
     }('http://192.168.161.130:8181')
     
     var resource = {
-      getModel : function(modelName, cb){
+      getModel : function(modelName, cb, opt){
+          var forceRefresh = opt && opt.refresh
           var m = modelStore.get(modelName)
-          if(typeof m !=="undefined"){
+          if(typeof m !=="undefined" && !forceRefresh){
             setTimeout(function(){cb(m)}, 0)
             return
           }
             
           $.ajax(
           {
-            url: "query/" + modelName + ".js", 
+            url: "query/" + modelName + ".js" + (forceRefresh ? ('?' + encodeURIComponent(new Date().getTime().toString())) : ''), 
             dataType : 'text',
             success : function(r){
               var m = JSON.parse(r);
@@ -65,12 +67,25 @@ require.define({
           if(typeof cb === 'undefined'){
             promise = new Promise()
           }
+          var style = document.createElement('link')
+          style.href = 'script/widgets/' + widget + '/' + widget + '.css'
+          style.type = 'text/css'
+          style.rel = 'stylesheet'
+          style.onload= function(){
+            if(promise)
+              promise.resolve('nothing here')
+            else
+              cb('nothing here')
+          }
+          document.getElementsByTagName('head')[0].appendChild(style)
+          /*
           $.get('script/widgets/' + widget + '/' + widget + '.css', function(response){
             if(promise)
               promise.resolve(response)
             else
               cb(response)
           })
+          */
           return promise
         }
       }
@@ -80,7 +95,12 @@ require.define({
     var updateModelFromMessage = function(model, message){
       if(message.enumeration){ // An item in a collection has changed
           var coll = model[message.enumeration]
-          coll[message.index][message.reference] = message.newValue
+          if(message.reference===''){
+            coll[message.index] = message.newValue
+          }else{
+            coll[message.index][message.reference] = message.newValue
+          }
+          
       }else{ // A primitive property changed
         var property = message.reference,
             oldVal = model[property]

@@ -66,7 +66,7 @@ require.define({'editable': function(require, exports){
               if(!!collection.length){
                 var collParts = collection.attr('data-enumeration').split(' ')
                 message.enumeration = collParts[2]
-                message.reference = message.reference.replace(collParts[0] + '.', '')
+                message.reference = message.reference.indexOf('.')===-1 ? '' : message.reference.replace(collParts[0] + '.', '')
                 message.index = collection.attr('data-index')
               }
                 

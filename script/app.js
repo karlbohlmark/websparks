@@ -44,7 +44,7 @@ require.define({
   		
   		resource.getStyle(name, 
   		  function gotStyle(){
-  		    
+  		    //alert('gotstyle: ' + name)
   		  }
 		  );
   		resource.getTemplate(name, 
@@ -73,7 +73,7 @@ require.define({
     exports.run = function(){
 		  
 		  var widgets = [];
-		  ['cv-custom', /* 'skill-add', 'person-add', 'people-search' */].forEach(function(widgetName){
+		  ['cv-custom', 'skill-add', /* 'person-add', 'people-search' */].forEach(function(widgetName){
 	       var widget = require("widgets/name/name".replace(/name/g, widgetName)).widget;
 		   widgets.push({title: widgetName, action: '#/view/' + widgetName});
 		  })
@@ -96,7 +96,7 @@ require.define({
 	  "menu",
 	  //"widgets/cv/cv",
 	  "widgets/cv-custom/cv-custom",
-    //"widgets/skill-add/skill-add", 
+    "widgets/skill-add/skill-add", 
     //"widgets/person-add/person-add",
     //"widgets/people-search/people-search",
     "layout",

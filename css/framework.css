@@ -88,3 +88,11 @@ body{
 #head h1{
   margin-top:20px;
 }
+
+.main{
+  float:left
+}
+
+.sidebar{
+  float:right
+}

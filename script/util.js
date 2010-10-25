@@ -36,7 +36,7 @@ require.define(
         
         MultiPromise.prototype.promiseResolved = function(){
           this.promises.forEach(function(p){
-            if((p instanceof Promise) ||)
+            //if((p instanceof Promise) ||)
           })
         }
         
