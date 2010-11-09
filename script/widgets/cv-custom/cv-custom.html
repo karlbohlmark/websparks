@@ -3,7 +3,7 @@
   <p>${introduction}</p>
   <div class="projects">
     <div partial="project" each="project in projects">
-        <h2>${project.customerName}, ${project.title}</h2>
+        <h2><span>${project.customerName}</span>, <span>${project.title}</span></h2>
         <p>${project.description}</p>
     </div>
   </div>

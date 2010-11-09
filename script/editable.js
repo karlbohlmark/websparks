@@ -20,7 +20,8 @@ require.define({'editable': function(require, exports){
               'font-size': jElem.css('font-size'), 
               'font-weight': jElem.css('font-weight'),
               'margin-bottom': jElem.css('margin-bottom'),
-              'margin-top': jElem.css('margin-top')
+              'margin-top': jElem.css('margin-top'),
+              'width': jElem.width() + 'px'
             })
             
             jElem.after(editor)
